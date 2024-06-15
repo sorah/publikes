@@ -64,7 +64,7 @@ module Publikes
     end
 
     def self.merge_batch(event:, context:)
-      Publikes::CloseBatchAction.new(
+      Publikes::MergeBatchAction.new(
         environment:,
         batch_id: event.fetch('batch_id'),
       ).perform

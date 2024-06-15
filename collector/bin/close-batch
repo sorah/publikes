@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$stdout.sync = true
+
+require 'json'
+require 'publikes/environment'
+require 'publikes/lock'
+require 'publikes/close_batch_action'
+
+environment = Publikes::Environment.from_os
+
+lock = Publikes::Lock.new(environment:, group: 'current', id: Publikes::Lock.id_by_hostname('bin/close-batch'))
+lock.with_lock do
+  p Publikes::CloseBatchAction.new(
+    environment:,
+  ).perform
+end

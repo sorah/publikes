@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$stdout.sync = true
+
+require 'json'
+require 'publikes/environment'
+require 'publikes/lock'
+require 'publikes/merge_batch_action'
+
+environment = Publikes::Environment.from_os
+
+p Publikes::MergeBatchAction.new(
+  environment:,
+  batch_id: ARGV[0],
+).perform

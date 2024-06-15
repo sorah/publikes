@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$stdout.sync = true
+
+require 'json'
+require 'publikes/environment'
+require 'publikes/insert_status_action'
+environment = Publikes::Environment.from_os
+
+p Publikes::InsertStatusAction.new(
+  environment:,
+  statuses: ARGV.map do |id|
+    {
+      id:,
+      ts: Time.now.to_i,
+    }
+  end,
+).perform

@@ -36,7 +36,7 @@ module Publikes
       batch
     end
 
-    def self.put(batch, env:, verify: true, cache_control: nil)
+    def self.put(batch, env:, verify: true, cache_control: "public, max-age=0")
       if verify
         nonce = SecureRandom.urlsafe_base64(32)
         batch[:update_nonce] = nonce

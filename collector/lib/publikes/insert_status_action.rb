@@ -43,6 +43,16 @@ module Publikes
         end
       end
 
+      if env.state_machine_arn_rotate_batch && retval[:mergeable]
+        begin
+          env.states.start_execution(
+            state_machine_arn: env.state_machine_arn_rotate_batch,
+            input: JSON.generate({auto: true}),
+          )
+        rescue Aws::States::Errors::ExecutionAlreadyExists
+        end
+      end
+
       retval
     end
 
@@ -92,6 +102,7 @@ module Publikes
       {
         new_statuses:,
         batch_id:,
+        mergeable: Publikes::Batch.mergeable?(batch, env:)
       }
     end
   end

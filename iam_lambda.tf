@@ -89,6 +89,7 @@ data "aws_iam_policy_document" "Lambda2" {
     ]
     resources = [
       aws_sfn_state_machine.store-status.arn,
+      aws_sfn_state_machine.rotate-batch.arn,
     ]
   }
 }

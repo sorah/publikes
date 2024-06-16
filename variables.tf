@@ -7,7 +7,17 @@ variable "name_prefix" {
 variable "s3_bucket_name" {
   type = string
 }
+
 variable "app_domain" {
+  type = string
+}
+variable "certificate_arn" {
+  type = string
+}
+variable "cloudfront_log_bucket" {
+  type = string
+}
+variable "cloudfront_log_prefix" {
   type = string
 }
 

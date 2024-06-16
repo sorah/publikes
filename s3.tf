@@ -55,3 +55,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
     }
   }
 }
+
+resource "aws_s3_bucket_cors_configuration" "bucket" {
+  bucket = aws_s3_bucket.bucket.id
+
+  cors_rule {
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+  }
+}

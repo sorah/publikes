@@ -70,6 +70,10 @@ module Publikes
         nil
       end
 
+      if new_statuses.empty?
+        return {new_statuses:, batch_id:, mergeable: false}
+      end
+
       batch = begin
         Publikes::Batch.get(batch_id, env:)
       rescue Aws::S3::Errors::NoSuchKey

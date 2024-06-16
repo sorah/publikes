@@ -8,11 +8,14 @@ require 'aws-sdk-states'
 
 module Publikes
   class Environment
-    def initialize(s3_bucket:, sqs_queue_url:, secret_id:, state_machine_arn_store_status:)
+    def initialize(s3_bucket:, sqs_queue_url: nil, secret_id: nil, state_machine_arn_store_status: nil, max_items_per_page: nil, max_items_in_head: nil)
       @s3_bucket = s3_bucket
       @sqs_queue_url = sqs_queue_url
       @secret_id = secret_id
       @state_machine_arn_store_status = state_machine_arn_store_status
+
+      @max_items_per_page = max_items_per_page || 10
+      @max_items_in_head = max_items_in_head || 20
 
       @s3 = nil
       @secretsmanager = nil
@@ -30,6 +33,8 @@ module Publikes
         sqs_queue_url: ENV['SQS_QUEUE_URL'],
         secret_id: ENV['SECRET_ID'],
         state_machine_arn_store_status: ENV['STATE_MACHINE_ARN_STORE_STATUS'],
+        max_items_per_page: ENV['MAX_ITEMS_PER_PAGE']&.to_i,
+        max_items_in_head: ENV['MAX_ITEMS_IN_HEAD']&.to_i,
       )
     end
 
@@ -37,6 +42,9 @@ module Publikes
     attr_reader :sqs_queue_url
     attr_reader :secret_id
     attr_reader :state_machine_arn_store_status
+
+    attr_reader :max_items_per_page
+    attr_reader :max_items_in_head
 
     def s3
       @s3 ||= Aws::S3::Client.new(logger:)

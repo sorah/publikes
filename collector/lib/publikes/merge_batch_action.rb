@@ -7,8 +7,6 @@ require 'publikes/batch'
 
 module Publikes
   class MergeBatchAction
-    MAX_ITEMS = 40
-
     def initialize(environment:, batch_id:, timestamp: Time.now.to_i)
       @environment = environment
       @batch_id = batch_id
@@ -30,7 +28,7 @@ module Publikes
       batch.fetch(:pages).each do |page_id|
         page = JSON.parse(env.s3.get_object(bucket: env.s3_bucket, key: "data/public/pages/#{page_id}.json").body.read, symbolize_names: true)
         pending_items.concat(page.fetch(:statuses))
-        if pending_items.size >= MAX_ITEMS
+        if pending_items.size >= env.max_items_per_page
           merged_pages.push(create_page(merged_pages.size.succ, pending_items, item_ids))
           pending_items = []
         end

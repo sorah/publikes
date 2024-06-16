@@ -56,5 +56,9 @@ module Publikes
       end
       retval
     end
+
+    def self.mergeable?(batch, env:)
+      batch[:head] && batch[:pages].size >= env.max_items_in_head
+    end
   end
 end

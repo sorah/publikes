@@ -22,19 +22,12 @@ module Publikes
         return { mergeability: false, batch_id: }
       end
 
-      batch = JSON.parse(
-        env.s3.get_object(
-          bucket: env.s3_bucket,
-          key: "data/public/batches/#{batch_id}.json",
-        ).body.read,
-        symbolize_names: true,
-      )
-      raise "batch_id inconsistency #{batch_id.inspect}, #{batch[:id].inspect}" unless batch_id == batch[:id]
+      batch = Publikes::Batch.get(batch_id, env:)
       raise "head #{batch_id.inspect} is not head" unless batch[:head]
 
       return {
         batch_id:,
-        mergeable: (batch[:pages].size >= 7),
+        mergeable: Publikes::Batch.mergeable?(batch, env:),
       }
     end
   end

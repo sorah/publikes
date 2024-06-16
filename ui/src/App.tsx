@@ -62,7 +62,7 @@ function App() {
           <a href="/">Back to the most recent like</a>
         </p>
       ) : null}
-      <main>
+      <main lang={import.meta.env.VITE_HTML_LANG}>
         {data?.map((b) => {
           if (!b.batch) return null;
           const page = b.page;

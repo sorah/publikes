@@ -1,8 +1,8 @@
 locals {
-  lambda_env_vars = {
+  lambda_env_vars = merge({
     S3_BUCKET = aws_s3_bucket.bucket.bucket
     SECRET_ID = aws_secretsmanager_secret.secret.arn
-  }
+  }, var.lambda_env_vars)
 }
 
 data "archive_file" "collector" {
@@ -26,7 +26,9 @@ resource "aws_lambda_function" "collector-action" {
   timeout     = 60 * 15
 
   environment {
-    variables = local.lambda_env_vars
+    variables = merge(local.lambda_env_vars, {
+      STATE_MACHINE_ARN_ROTATE_BATCH = "arn:aws:states:${data.aws_region.current.id}:${data.aws_caller_identity.current.id}:stateMachine:${var.name_prefix}-rotate-batch" # XXX: cycle aws_sfn_state_machine.rotate-batch.arn,
+    })
   }
 }
 

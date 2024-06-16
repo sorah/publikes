@@ -65,7 +65,7 @@ module Publikes
       end
 
       new_statuses = statuses.reject do |s|
-        env.s3.head_object(bucket: env.s3_bucket, key: "data/public/statuses/#{s.fetch(:id)}.json")
+        env.s3.head_object(bucket: env.s3_bucket, key: "data/private/statuses/#{s.fetch(:id)}.json")
       rescue Aws::S3::Errors::NoSuchKey, Aws::S3::Errors::NotFound
         nil
       end

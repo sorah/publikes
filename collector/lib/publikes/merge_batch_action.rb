@@ -20,15 +20,7 @@ module Publikes
     attr_reader :timestamp
 
     def perform
-      key = "data/public/batches/#{batch_id}.json"
-      batch = JSON.parse(
-        env.s3.get_object(
-          bucket: env.s3_bucket,
-          key:,
-        ).body.read,
-        symbolize_names: true,
-      )
-      raise "batch_id inconsistency" unless batch_id == batch[:id]
+      batch = Publikes::Batch.get(batch_id, env:)
       raise "head=false, already merged?" unless batch[:head]
 
       # Merge pages
@@ -56,16 +48,13 @@ module Publikes
       merged_pages.unshift(create_page(0, missing_items, item_ids)) unless missing_items.empty?
 
       # Replace batch with merged pages
-      env.s3.put_object(
-        bucket: env.s3_bucket,
-        key:,
-        content_type: "application/json; charset=utf-8",
-        cache_control: "public, max-age=604800",
-        body: JSON.generate(batch.merge(
+      Publikes::Batch.put(
+        batch.merge(
           head: false,
           pages: merged_pages,
-          updated_at: timestamp,
-        )),
+        ),
+        cache_control: 'public, max-age=604800',
+        env:,
       )
 
       # Delete head items

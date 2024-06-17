@@ -43,6 +43,7 @@ module Publikes
         bucket: env.s3_bucket,
         key: KEY,
         content_type: "application/json; charset=utf-8",
+        cache_control: "public, s-maxage=300, max-age=0",
         body: JSON.generate(new_value),
       )
       @value_was = value

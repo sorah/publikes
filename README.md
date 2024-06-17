@@ -52,7 +52,7 @@ To avoid paying 100 USD/mo for Twitter API, this system uses IFTTT to feed likes
 - URL: `{lambda_function_uri}/publikes-ingest`
 - Content-Type: application/json
 - Headers: `x-secret: {secret}`
-- Content: `{"url": "<<<{LinkToTweet}>>>"}`
+- Content: `{"url": "<<<{{LinkToTweet}}>>>"}`
 
 ## How it works
 

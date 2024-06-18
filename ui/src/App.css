@@ -11,10 +11,6 @@ body {
   text-align: left;
 }
 
-#root a, #root a:visited {
-  color: #0e0e0e;
-}
-
 #root > header h1 {
   font-size: 24px;
   margin-bottom: 8px;
@@ -48,14 +44,23 @@ body {
   font-size: 18px;
 }
 
+/* We miss Firefox. Sorry about that. */
+@scope (#root) to (.liked-tweet) {
+  a, a:visited {
+    color: #006fd6;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #15202b;
     scrollbar-color: #5c6e7e,#1e2732;
     color: #ffffff;
   }
-  #root a, #root a:visited {
-    color: #1d9bf0;
+  @scope (#root) to (.liked-tweet) {
+    a, a:visited {
+      color: #1d9bf0;
+    }
   }
   .powered-by {
     color: #8b98a5;

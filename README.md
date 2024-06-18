@@ -6,6 +6,14 @@ Publish your Twitter likes in a cheap serverless manner. Uses AWS Lambda and Ama
 
 ## Setup
 
+### Prerequisite
+
+- AWS account
+- Terraform
+- [jrsonnet](https://github.com/CertainLach/jrsonnet)
+- Node.JS (npm)
+- Ruby
+
 ### Infrastructure
 
 Deploy infrastructure using Terraform. This repository works as a terraform module:

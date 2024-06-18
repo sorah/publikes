@@ -24,7 +24,11 @@ module "prd" {
   cloudfront_log_prefix = "like.example.com/"
 }
 
-# Use module.prd.cloudfront_distribution_domain_name to create a DNS record
+# outputs:
+# - module.prd.cloudfront_distribution_domain_name to create a DNS record
+# - module.prd.cloudfront_distribution_id for deploy.rb (see below)
+# - module.prd.lambda_function_url for ingestion webhook (see below)
+
 ```
 
 ### Web UI
@@ -34,7 +38,7 @@ cd ui/
 npm i
 vim .env.production.local
 npm run build
-ruby deploy.rb $S3_BUCKET_NAME
+ruby deploy.rb $S3_BUCKET_NAME $CLOUDFRONT_DISTRIBUTION_ID
 ```
 
 Refer to [ui/.env](./ui/.env) for available environment variables.

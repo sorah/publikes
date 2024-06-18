@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'aws-sdk-s3'
-#require 'aws-sdk-cloudfront'
 require 'fileutils'
 require 'securerandom'
 require 'digest/md5'
@@ -14,17 +13,18 @@ CACHE_CONTROLS = {
   'text/css; charset=utf-8' => 'max-age=31536000',
   'text/javascript; charset=utf-8' => 'max-age=31536000',
   'text/plain; charset=utf-8' => 'public, must-revalidate, max-age=0, s-maxage=0',
-  'text/html; charset=utf-8' => 'public, must-revalidate, max-age=0, s-maxage=0',
+  'text/html; charset=utf-8' => 'max-age=0, s-maxage=31536000',
   'application/json; charset=utf-8' => 'public, must-revalidate, max-age=0, s-maxage=0',
   'image/webp' => 'public, must-revalidate, max-age=0, s-maxage=0',
   'image/svg+xml' => 'public, must-revalidate, max-age=0, s-maxage=0',
 }
 
 bucket = ARGV[0]
+cloudfront_distribution_id = ARGV[1]
 prefix ="ui/"
 @s3 = Aws::S3::Client.new(logger: Logger.new($stdout))
 
-abort "usage: #$0 bucket" unless bucket
+abort "usage: #$0 bucket [cloudfornt_distribution_id]" unless bucket
 
 srcdir = File.join(__dir__,"dist")
 
@@ -86,4 +86,20 @@ Dir[File.join(srcdir, '**', '*')].each do |path|
         body: io,
       )
     end
+end
+
+if cloudfront_distribution_id
+  require 'aws-sdk-cloudfront'
+  @cf = Aws::CloudFront::Client.new(region: 'us-east-1', logger: Logger.new($stdout))
+  resp = @cf.create_invalidation(
+    distribution_id: cloudfront_distribution_id,
+    invalidation_batch: {
+      paths: {
+        quantity: 2,
+        items: ['/', '/index.html'],
+      },
+      caller_reference: ENV['GITHUB_ACTION'] ? "#{ENV['GITHUB_ACTION']}_#{ENV['GITHUB_RUN_ID']}" : SecureRandom.hex(10),
+    },
+  )
+  @cf.wait_until(:invalidation_completed, { distribution_id: cloudfront_distribution_id, id: resp.invalidation.id })
 end

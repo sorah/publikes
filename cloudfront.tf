@@ -38,6 +38,7 @@ resource "aws_cloudfront_cache_policy" "data" {
 resource "aws_cloudfront_distribution" "public" {
   enabled         = true
   is_ipv6_enabled = true
+  http_version    = "http2and3"
   comment         = "publikes/${var.name_prefix}"
   aliases         = [var.app_domain]
 

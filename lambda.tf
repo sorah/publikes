@@ -17,7 +17,7 @@ resource "aws_lambda_function" "collector-action" {
   filename         = "${path.module}/collector.zip"
   source_code_hash = data.archive_file.collector.output_base64sha256
   handler          = "entrypoint.Publikes::LambdaHandler.action_handler"
-  runtime          = "ruby3.2"
+  runtime          = "ruby3.4"
   architectures    = ["arm64"]
 
   role = aws_iam_role.Lambda.arn
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "collector-sqs" {
   filename         = "${path.module}/collector.zip"
   source_code_hash = data.archive_file.collector.output_base64sha256
   handler          = "entrypoint.Publikes::LambdaHandler.sqs_handler"
-  runtime          = "ruby3.2"
+  runtime          = "ruby3.4"
   architectures    = ["arm64"]
 
   role = aws_iam_role.Lambda.arn
@@ -70,7 +70,7 @@ resource "aws_lambda_function" "collector-http" {
   filename         = "${path.module}/collector.zip"
   source_code_hash = data.archive_file.collector.output_base64sha256
   handler          = "entrypoint.Publikes::LambdaHandler.http_handler"
-  runtime          = "ruby3.2"
+  runtime          = "ruby3.4"
   architectures    = ["arm64"]
 
   role = aws_iam_role.Lambda.arn
@@ -84,6 +84,7 @@ resource "aws_lambda_function" "collector-http" {
     })
   }
 }
+
 resource "aws_lambda_function_url" "collector-http" {
   function_name      = aws_lambda_function.collector-http.function_name
   authorization_type = "NONE"

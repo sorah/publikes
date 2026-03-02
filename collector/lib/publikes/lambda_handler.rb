@@ -48,6 +48,7 @@ module Publikes
       Publikes::StoreStatusAction.new(
         environment:,
         status_id: event.fetch('status_id'),
+        visited_status_ids: event.fetch('visited_status_ids', []),
       ).perform
     end
 

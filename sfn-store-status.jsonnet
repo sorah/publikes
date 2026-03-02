@@ -1,8 +1,14 @@
 local tfstate = std.parseJson(std.extVar('TFSTATE'));
 
 local definition = {
-  StartAt: 'InvokeStoreStatus',
+  StartAt: 'Initialize',
   States: {
+    Initialize: {
+      Type: 'Pass',
+      Result: [],
+      ResultPath: '$.visited_status_ids',
+      Next: 'InvokeStoreStatus',
+    },
     InvokeStoreStatus: {
       Type: 'Task',
       Resource: 'arn:aws:states:::lambda:invoke',
@@ -11,6 +17,7 @@ local definition = {
         Payload: {
           publikes_action: 'store_status',
           'status_id.$': '$.status_id',
+          'visited_status_ids.$': '$.visited_status_ids',
         },
         FunctionName: tfstate.lambda_arn_action,
       },
@@ -28,7 +35,29 @@ local definition = {
           JitterStrategy: 'FULL',
         },
       ],
-      End: true,
+      Next: 'CheckQuotedTweet',
+    },
+    CheckQuotedTweet: {
+      Type: 'Choice',
+      Choices: [
+        {
+          Variable: '$.quoted_status_id',
+          IsPresent: true,
+          Next: 'PrepareNextIteration',
+        },
+      ],
+      Default: 'Done',
+    },
+    PrepareNextIteration: {
+      Type: 'Pass',
+      Parameters: {
+        'status_id.$': '$.quoted_status_id',
+        'visited_status_ids.$': '$.visited_status_ids',
+      },
+      Next: 'InvokeStoreStatus',
+    },
+    Done: {
+      Type: 'Succeed',
     },
   },
 };

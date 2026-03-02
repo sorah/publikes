@@ -4,14 +4,15 @@ require 'aws-sdk-s3'
 
 module Publikes
   class StoreStatusAction
-    def initialize(environment:, status_id:)
+    def initialize(environment:, status_id:, visited_status_ids: [])
       @environment = environment
       @status_id = status_id.to_s
+      @visited_status_ids = visited_status_ids.map(&:to_s)
 
       raise ArgumentError, "invalid status_id" unless @status_id.match?(/\A[0-9a-zA-Z]+\z/)
     end
 
-    attr_reader :status_id
+    attr_reader :status_id, :visited_status_ids
     def env; @environment; end
 
     USER_AGENT = 'Publikes-Crawler (+https://github.com/sorah/publikes)'
@@ -56,9 +57,14 @@ module Publikes
         body: JSON.generate(new_data),
       )
 
-      {
-        status_id:,
-      }
+      quoted_status_id = fxtwitter_data&.dig('tweet', 'quote', 'id')&.to_s
+      new_visited = visited_status_ids | [status_id]
+
+      result = { status_id:, visited_status_ids: new_visited }
+      if quoted_status_id && !new_visited.include?(quoted_status_id)
+        result[:quoted_status_id] = quoted_status_id
+      end
+      result
     end
   end
 end

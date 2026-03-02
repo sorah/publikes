@@ -35,6 +35,33 @@ local definition = {
           JitterStrategy: 'FULL',
         },
       ],
+      Next: 'InvokeSaveMedia',
+    },
+    InvokeSaveMedia: {
+      Type: 'Task',
+      Resource: 'arn:aws:states:::lambda:invoke',
+      ResultPath: null,
+      Parameters: {
+        Payload: {
+          publikes_action: 'save_media',
+          'status_id.$': '$.status_id',
+        },
+        FunctionName: tfstate.lambda_arn_action,
+      },
+      Retry: [
+        {
+          ErrorEquals: [
+            'Lambda.ServiceException',
+            'Lambda.AWSLambdaException',
+            'Lambda.SdkClientException',
+            'Lambda.TooManyRequestsException',
+          ],
+          IntervalSeconds: 1,
+          BackoffRate: 2,
+          MaxAttempts: 20,
+          JitterStrategy: 'FULL',
+        },
+      ],
       Next: 'CheckQuotedTweet',
     },
     CheckQuotedTweet: {

@@ -7,6 +7,7 @@ require 'publikes/determine_mergeability_action'
 require 'publikes/ingest_endpoint'
 require 'publikes/insert_status_action'
 require 'publikes/merge_batch_action'
+require 'publikes/save_media_action'
 require 'publikes/store_status_action'
 
 require 'json'
@@ -35,6 +36,8 @@ module Publikes
       case event.fetch('publikes_action')
       when 'store_status'
         store_status(event:, context:)
+      when 'save_media'
+        save_media(event:, context:)
       when 'determine_mergeability'
         determine_mergeability(event:, context:)
       when 'close_batch'
@@ -49,6 +52,13 @@ module Publikes
         environment:,
         status_id: event.fetch('status_id'),
         visited_status_ids: event.fetch('visited_status_ids', []),
+      ).perform
+    end
+
+    def self.save_media(event:, context:)
+      Publikes::SaveMediaAction.new(
+        environment:,
+        status_id: event.fetch('status_id'),
       ).perform
     end
 

@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+$stdout.sync = true
+
+require 'json'
+require 'publikes/environment'
+require 'publikes/enumerate'
+
+environment = Publikes::Environment.from_os
+
+Publikes::Enumerate.new(environment:).each_page do |page|
+  page_time = page[:created_at] ? Time.at(page[:created_at]).strftime('%Y-%m-%d %H:%M:%S') : '?'
+  puts "Page #{page[:id]} (#{page_time})"
+
+  executions = []
+
+  page.fetch(:statuses).each do |status|
+    status_id = status.fetch(:id).to_s
+    puts "  Starting #{status_id}"
+
+    resp = environment.states.start_execution(
+      state_machine_arn: environment.state_machine_arn_store_status,
+      input: JSON.generate({ status_id:, no_overwrite: true }),
+    )
+    executions << { status_id:, arn: resp.execution_arn, status: 'RUNNING' }
+  end
+
+  until executions.all? { |e| e[:status] != 'RUNNING' }
+    executions.each do |exec|
+      next if exec[:status] != 'RUNNING'
+      resp = environment.states.describe_execution(execution_arn: exec[:arn])
+      exec[:status] = resp.status
+    end
+
+    running = executions.select { |e| e[:status] == 'RUNNING' }
+    done = executions.select { |e| e[:status] != 'RUNNING' && !e[:reported] }
+    done.each do |exec|
+      puts "  #{exec[:status_id]}: #{exec[:status]}"
+      exec[:reported] = true
+    end
+
+    unless running.empty?
+      puts "  waiting: #{running.map { |e| e[:status_id] }.join(', ')}"
+      sleep 5
+    end
+  end
+end

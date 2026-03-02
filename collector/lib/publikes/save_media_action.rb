@@ -1,5 +1,4 @@
 require 'json'
-require 'open-uri'
 require 'tempfile'
 require 'aws-sdk-s3'
 
@@ -68,9 +67,7 @@ module Publikes
 
         key = "data/private/media/#{status_id}/#{filename}"
         Tempfile.create(["publikes-media-", ".#{File.extname(filename)}"], binmode: true) do |tmpfile|
-          URI.open(source_url, "User-Agent" => USER_AGENT) do |resp|
-            IO.copy_stream(resp, tmpfile)
-          end
+          download_to(source_url, tmpfile.path)
           tmpfile.rewind
           env.s3.put_object(
             bucket: env.s3_bucket,
@@ -106,6 +103,10 @@ module Publikes
     end
 
     private
+
+    def download_to(url, path)
+      system("curl", "-sSfL", "-o", path, "-A", USER_AGENT, "--", url, exception: true)
+    end
 
     def photo_extension(url)
       path = URI.parse(url).path

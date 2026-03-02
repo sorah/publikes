@@ -52,6 +52,7 @@ module Publikes
         environment:,
         status_id: event.fetch('status_id'),
         visited_status_ids: event.fetch('visited_status_ids', []),
+        no_overwrite: event.fetch('no_overwrite', false),
       ).perform
     end
 
@@ -59,6 +60,7 @@ module Publikes
       Publikes::SaveMediaAction.new(
         environment:,
         status_id: event.fetch('status_id'),
+        no_overwrite: event.fetch('no_overwrite', false),
       ).perform
     end
 

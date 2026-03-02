@@ -4,14 +4,15 @@ require 'aws-sdk-s3'
 
 module Publikes
   class SaveMediaAction
-    def initialize(environment:, status_id:)
+    def initialize(environment:, status_id:, no_overwrite: false)
       @environment = environment
       @status_id = status_id.to_s
+      @no_overwrite = no_overwrite
 
       raise ArgumentError, "invalid status_id" unless @status_id.match?(/\A[0-9a-zA-Z]+\z/)
     end
 
-    attr_reader :status_id
+    attr_reader :status_id, :no_overwrite
     def env; @environment; end
 
     USER_AGENT = 'Publikes-Crawler (+https://github.com/sorah/publikes)'
@@ -24,6 +25,14 @@ module Publikes
     }.freeze
 
     def perform
+      if no_overwrite
+        begin
+          env.s3.head_object(bucket: env.s3_bucket, key: "data/private/media/#{status_id}/index.json")
+          return { status_id:, saved_keys: [] }
+        rescue Aws::S3::Errors::NotFound
+        end
+      end
+
       data = JSON.parse(
         env.s3.get_object(
           bucket: env.s3_bucket,

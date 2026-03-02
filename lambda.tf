@@ -27,6 +27,7 @@ resource "aws_lambda_function" "collector-action" {
 
   environment {
     variables = merge(local.lambda_env_vars, {
+      LANG = "C.UTF-8",
     })
   }
 }
@@ -47,6 +48,7 @@ resource "aws_lambda_function" "collector-sqs" {
 
   environment {
     variables = merge(local.lambda_env_vars, {
+      LANG                           = "C.UTF-8",
       STATE_MACHINE_ARN_STORE_STATUS = aws_sfn_state_machine.store-status.arn,
       STATE_MACHINE_ARN_ROTATE_BATCH = aws_sfn_state_machine.rotate-batch.arn, #"arn:aws:states:${data.aws_region.current.id}:${data.aws_caller_identity.current.id}:stateMachine:${var.name_prefix}-rotate-batch"
     })
@@ -80,6 +82,7 @@ resource "aws_lambda_function" "collector-http" {
 
   environment {
     variables = merge(local.lambda_env_vars, {
+      LANG          = "C.UTF-8",
       SQS_QUEUE_URL = aws_sqs_queue.queue.url
     })
   }

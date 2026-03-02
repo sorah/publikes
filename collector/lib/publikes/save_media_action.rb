@@ -1,5 +1,6 @@
 require 'json'
 require 'open-uri'
+require 'tempfile'
 require 'aws-sdk-s3'
 
 module Publikes
@@ -66,13 +67,18 @@ module Publikes
         next unless source_url
 
         key = "data/private/media/#{status_id}/#{filename}"
-        body = URI.open(source_url, "User-Agent" => USER_AGENT, &:read)
-        env.s3.put_object(
-          bucket: env.s3_bucket,
-          key:,
-          content_type:,
-          body:,
-        )
+        Tempfile.create(["publikes-media-", ".#{File.extname(filename)}"], binmode: true) do |tmpfile|
+          URI.open(source_url, "User-Agent" => USER_AGENT) do |resp|
+            IO.copy_stream(resp, tmpfile)
+          end
+          tmpfile.rewind
+          env.s3.put_object(
+            bucket: env.s3_bucket,
+            key:,
+            content_type:,
+            body: tmpfile,
+          )
+        end
 
         index_entries << {
           key:,

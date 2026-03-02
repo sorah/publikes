@@ -66,7 +66,7 @@ module Publikes
         next unless source_url
 
         key = "data/private/media/#{status_id}/#{filename}"
-        Tempfile.create(["publikes-media-", ".#{File.extname(filename)}"], binmode: true) do |tmpfile|
+        filesize = Tempfile.create(["publikes-media-", ".#{File.extname(filename)}"], binmode: true) do |tmpfile|
           download_to(source_url, tmpfile.path)
           tmpfile.rewind
           env.s3.put_object(
@@ -75,12 +75,14 @@ module Publikes
             content_type:,
             body: tmpfile,
           )
+          tmpfile.size
         end
 
         index_entries << {
           key:,
           source_url:,
           filename:,
+          filesize:,
           original: item,
         }
       end

@@ -7,6 +7,23 @@ local definition = {
       Type: 'Pass',
       Result: [],
       ResultPath: '$.visited_status_ids',
+      Next: 'DefaultNoOverwrite',
+    },
+    DefaultNoOverwrite: {
+      Type: 'Choice',
+      Choices: [
+        {
+          Variable: '$.no_overwrite',
+          IsPresent: true,
+          Next: 'InvokeStoreStatus',
+        },
+      ],
+      Default: 'SetNoOverwriteFalse',
+    },
+    SetNoOverwriteFalse: {
+      Type: 'Pass',
+      Result: false,
+      ResultPath: '$.no_overwrite',
       Next: 'InvokeStoreStatus',
     },
     InvokeStoreStatus: {
@@ -18,6 +35,7 @@ local definition = {
           publikes_action: 'store_status',
           'status_id.$': '$.status_id',
           'visited_status_ids.$': '$.visited_status_ids',
+          'no_overwrite.$': '$.no_overwrite',
         },
         FunctionName: tfstate.lambda_arn_action,
       },
@@ -53,12 +71,17 @@ local definition = {
       Parameters: {
         'status_id.$': '$.quoted_status_id',
         'visited_status_ids.$': '$.visited_status_ids',
+        'no_overwrite.$': '$.no_overwrite',
       },
       Next: 'InvokeStoreStatus',
     },
     SaveMedia: {
       Type: 'Map',
       ItemsPath: '$.visited_status_ids',
+      ItemSelector: {
+        'status_id.$': '$$.Map.Item.Value',
+        'no_overwrite.$': '$.no_overwrite',
+      },
       ItemProcessor: {
         ProcessorConfig: {
           Mode: 'INLINE',
@@ -71,7 +94,8 @@ local definition = {
             Parameters: {
               Payload: {
                 publikes_action: 'save_media',
-                'status_id.$': '$',
+                'status_id.$': '$.status_id',
+                'no_overwrite.$': '$.no_overwrite',
               },
               FunctionName: tfstate.lambda_arn_action,
             },

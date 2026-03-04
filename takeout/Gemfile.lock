@@ -1,0 +1,79 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    aws-eventstream (1.4.0)
+    aws-partitions (1.1221.0)
+    aws-sdk-core (3.242.0)
+      aws-eventstream (~> 1, >= 1.3.0)
+      aws-partitions (~> 1, >= 1.992.0)
+      aws-sigv4 (~> 1.9)
+      base64
+      bigdecimal
+      jmespath (~> 1, >= 1.6.1)
+      logger
+    aws-sdk-kms (1.122.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-s3 (1.213.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-secretsmanager (1.128.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-sqs (1.111.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-states (1.104.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
+      aws-sigv4 (~> 1.5)
+    aws-sigv4 (1.12.1)
+      aws-eventstream (~> 1, >= 1.0.2)
+    base64 (0.3.0)
+    bigdecimal (4.0.1)
+    concurrent-ruby (1.3.6)
+    jmespath (1.6.2)
+    logger (1.7.0)
+    mini_portile2 (2.8.9)
+    nokogiri (1.19.1)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    openssl (4.0.1)
+    racc (1.8.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  aws-sdk-s3
+  aws-sdk-secretsmanager
+  aws-sdk-sqs
+  aws-sdk-states
+  base64
+  concurrent-ruby
+  logger
+  nokogiri
+  openssl
+
+CHECKSUMS
+  aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
+  aws-partitions (1.1221.0) sha256=f09304480191f5ff03f8994705067779bc8fe5b4731183ce45f092afb706e8eb
+  aws-sdk-core (3.242.0) sha256=c17b3003acc78d80c1a8437b285a1cfc5e4d7749ce7821cf3071e847535a29a0
+  aws-sdk-kms (1.122.0) sha256=47ce3f51b26bd7d76f1270cfdfca17b40073ecd3219c8c9400788712abfb4eb8
+  aws-sdk-s3 (1.213.0) sha256=af596ccf544582406db610e95cc9099276eaf03142f57a2f30f76940e598e50d
+  aws-sdk-secretsmanager (1.128.0) sha256=d62cde1d34161097626ceb7addcaeaa5514046c6405fb745c6c64c47c02d2b9a
+  aws-sdk-sqs (1.111.0) sha256=b5bf7986ba3002c6f48472454fa009b4e68fe1023b38124aa7594c00a7d8df99
+  aws-sdk-states (1.104.0) sha256=c0e192c1f070001135b86f8215ddafb55c013180857cec96bfb1cb1a44e72202
+  aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
+  base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+  bigdecimal (4.0.1) sha256=8b07d3d065a9f921c80ceaea7c9d4ae596697295b584c296fe599dd0ad01c4a7
+  concurrent-ruby (1.3.6) sha256=6b56837e1e7e5292f9864f34b69c5a2cbc75c0cf5338f1ce9903d10fa762d5ab
+  jmespath (1.6.2) sha256=238d774a58723d6c090494c8879b5e9918c19485f7e840f2c1c7532cf84ebcb1
+  logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
+  mini_portile2 (2.8.9) sha256=0cd7c7f824e010c072e33f68bc02d85a00aeb6fce05bb4819c03dfd3c140c289
+  nokogiri (1.19.1) sha256=598b327f36df0b172abd57b68b18979a6e14219353bca87180c31a51a00d5ad3
+  openssl (4.0.1) sha256=e27974136b7b02894a1bce46c5397ee889afafe704a839446b54dc81cb9c5f7d
+  racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
+
+BUNDLED WITH
+  4.0.3
